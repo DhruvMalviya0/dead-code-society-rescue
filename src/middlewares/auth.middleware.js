@@ -1,6 +1,14 @@
 const jwtUtil = require('../utils/jwt');
 const { UnauthorizedError } = require('../utils/errors.util');
 
+/**
+ * Authenticates requests using the Authorization header JWT.
+ * @param {import('express').Request} req - Express request.
+ * @param {import('express').Response} res - Express response.
+ * @param {import('express').NextFunction} next - Express next callback.
+ * @returns {void} Calls next with success or unauthorized error.
+ * @throws {UnauthorizedError} If token is missing, invalid, or expired.
+ */
 module.exports = (req, res, next) => {
     const header = req.headers['authorization'];
     if (!header) return next(new UnauthorizedError('Unauthorized: missing token'));

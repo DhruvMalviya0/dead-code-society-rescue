@@ -1,8 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var userRoutes = require('./users');
-var shipmentRoutes = require('./shipments');
+const userRoutes = require('./users');
+const shipmentRoutes = require('./shipments');
 
 router.use('/users', userRoutes);
 router.use('/shipments', shipmentRoutes);

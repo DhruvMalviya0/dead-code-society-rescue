@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var shipmentController = require('../controllers/shipmentController');
-var auth = require('../middlewares/auth');
+const express = require('express');
+const router = express.Router();
+const shipmentController = require('../controllers/shipmentController');
+const auth = require('../middlewares/auth');
 
 router.get('/', auth, shipmentController.list);
 router.get('/:id', auth, shipmentController.getOne);

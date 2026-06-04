@@ -1,8 +1,8 @@
 module.exports = {
-    success: function(res, data, statusCode) {
-        return res.status(statusCode || 200).json({ success: true, data: data });
+    success(res, data, statusCode) {
+        return res.status(statusCode || 200).json({ success: true, data });
     },
-    error: function(res, message, statusCode) {
+    error(res, message, statusCode) {
         return res.status(statusCode || 400).json({ success: false, error: message });
     }
 };

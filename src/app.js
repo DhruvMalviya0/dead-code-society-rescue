@@ -1,14 +1,14 @@
 require('dotenv').config();
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var path = require('path');
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const path = require('path');
 
 // routes (index.js in src/routes)
-var routes = require('./routes');
+const routes = require('./routes');
 
-var app = express();
+const app = express();
 
 // middleware setup
 app.use(cors());
@@ -16,20 +16,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // database connection
-var mongoUrl = process.env.DATABASE_URL || 'mongodb://localhost:27017/logitrack';
-mongoose.connect(mongoUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-})
-.then(function() {
-    console.log('--- DATABASE CONNECTED ---');
-})
-.catch(function(err) {
-    console.log('DATABASE CONNECTION ERROR:');
-    console.log(err);
-});
+const mongoUrl = process.env.DATABASE_URL || 'mongodb://localhost:27017/logitrack';
+
+async function initDB() {
+    try {
+        await mongoose.connect(mongoUrl, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+            useFindAndModify: false
+        });
+        console.log('--- DATABASE CONNECTED ---');
+    } catch (err) {
+        console.log('DATABASE CONNECTION ERROR:');
+        console.log(err);
+    }
+}
+
+initDB();
 
 // register routes
 app.use('/api', routes); // all routes under /api
@@ -42,7 +46,7 @@ app.get('/', function(req, res) {
 // no 404 handler here, let express handle it for now
 
 // start server
-var PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 // SMELL: [MEDIUM] Server starts regardless of DB connection; consider delaying `app.listen` until DB is connected to avoid runtime errors.
 app.listen(PORT, function() {
     console.log('Server is alive on port ' + PORT);

@@ -1,24 +1,24 @@
-var Shipment = require('../models/Shipment');
+const Shipment = require('../models/Shipment');
 
 module.exports = {
-    listByUser: function(userId) {
-        return Shipment.find({ userId: userId }).lean();
+    listByUser(userId) {
+        return Shipment.find({ userId }).lean();
     },
 
-    getById: function(id) {
+    getById(id) {
         return Shipment.findById(id);
     },
 
-    createShipment: function(data) {
-        var newShipment = new Shipment(data);
+    createShipment(data) {
+        const newShipment = new Shipment(data);
         return newShipment.save();
     },
 
-    updateStatus: function(id, status) {
-        return Shipment.findByIdAndUpdate(id, { status: status }, { new: true });
+    updateStatus(id, status) {
+        return Shipment.findByIdAndUpdate(id, { status }, { new: true });
     },
 
-    deleteById: function(id) {
+    deleteById(id) {
         return Shipment.findByIdAndDelete(id);
     }
 };

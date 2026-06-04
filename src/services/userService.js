@@ -1,25 +1,25 @@
-var User = require('../models/User');
-var hash = require('../utils/hash');
+const User = require('../models/User');
+const hash = require('../utils/hash');
 
 module.exports = {
-    registerUser: function(userData) {
+    async registerUser(userData) {
         // whitelist expected fields
-        var u = {
+        const u = {
             name: userData.name,
             email: userData.email,
             password: hash.hash(userData.password),
             role: userData.role || 'user'
         };
 
-        var newUser = new User(u);
+        const newUser = new User(u);
         return newUser.save();
     },
 
-    findByEmail: function(email) {
-        return User.findOne({ email: email });
+    findByEmail(email) {
+        return User.findOne({ email });
     },
 
-    findById: function(id) {
+    findById(id) {
         return User.findById(id);
     }
 };

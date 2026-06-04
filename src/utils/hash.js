@@ -1,7 +1,7 @@
-var md5 = require('md5');
+const md5 = require('md5');
 
 module.exports = {
-    hash: function(input) {
+    hash(input) {
         return md5(input || '');
     }
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const shipmentController = require('../controllers/shipmentController');
-const auth = require('../middlewares/auth');
+const auth = require('../middlewares/auth.middleware');
 const validate = require('../middlewares/validate');
 const { createSchema, statusSchema } = require('../validators/shipment');
 

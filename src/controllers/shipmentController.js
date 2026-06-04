@@ -1,33 +1,33 @@
 const shipmentService = require('../services/shipmentService');
-const userService = require('../services/userService');
 const response = require('../utils/response');
+const { AppError, NotFoundError } = require('../utils/errors.util');
 
 module.exports = {
-    async list(req, res) {
+    async list(req, res, next) {
         try {
             const shipments = await shipmentService.listByUser(req.userId);
             return response.success(res, shipments);
         } catch (err) {
-            return response.error(res, 'Fetch failed', 500);
+            return next(err);
         }
     },
 
-    async getOne(req, res) {
+    async getOne(req, res, next) {
         try {
             const shipment = await shipmentService.getById(req.params.id);
-            if (!shipment) return response.error(res, 'Not found', 404);
+            if (!shipment) return next(new NotFoundError('Shipment not found'));
 
             if (shipment.userId.toString() !== req.userId && req.userRole !== 'admin') {
-                return response.error(res, 'No access to this shipment', 403);
+                return next(new AppError('No access to this shipment', 403));
             }
 
             return response.success(res, shipment);
         } catch (err) {
-            return response.error(res, 'Error on findById', 500);
+            return next(err);
         }
     },
 
-    async create(req, res) {
+    async create(req, res, next) {
         try {
             const trackId = 'SHIP-' + Date.now() + '-' + Math.floor(Math.random() * 100);
             const payload = Object.assign({}, req.body, { trackingId: trackId, userId: req.userId, status: 'pending' });
@@ -35,36 +35,36 @@ module.exports = {
             const saved = await shipmentService.createShipment(payload);
             return response.success(res, saved, 201);
         } catch (err) {
-            return response.error(res, 'Error saving shipment', 500);
+            return next(err);
         }
     },
 
-    async updateStatus(req, res) {
+    async updateStatus(req, res, next) {
         try {
             if (req.body.status === 'delivered' && req.userRole !== 'admin') {
-                return response.error(res, 'Admins only can deliver', 403);
+                return next(new AppError('Admins only can deliver', 403));
             }
 
             const doc = await shipmentService.updateStatus(req.params.id, req.body.status);
             return response.success(res, doc);
         } catch (err) {
-            return response.error(res, 'Update failed', 500);
+            return next(err);
         }
     },
 
-    async remove(req, res) {
+    async remove(req, res, next) {
         try {
             // enforce ownership or admin
             const shipment = await shipmentService.getById(req.params.id);
-            if (!shipment) return response.error(res, 'Not found', 404);
+            if (!shipment) return next(new NotFoundError('Shipment not found'));
             if (shipment.userId.toString() !== req.userId && req.userRole !== 'admin') {
-                return response.error(res, 'No permission to delete', 403);
+                return next(new AppError('No permission to delete', 403));
             }
 
             await shipmentService.deleteById(req.params.id);
             return response.success(res, { message: 'Deleted' });
         } catch (err) {
-            return response.error(res, 'Delete error', 500);
+            return next(err);
         }
     }
 };

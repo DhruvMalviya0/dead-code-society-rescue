@@ -1,11 +1,10 @@
 const jwtUtil = require('../utils/jwt');
-const response = require('../utils/response');
+const { UnauthorizedError } = require('../utils/errors.util');
 
 module.exports = (req, res, next) => {
     const header = req.headers['authorization'];
-    if (!header) return response.error(res, 'Unauthorized: missing token', 401);
+    if (!header) return next(new UnauthorizedError('Unauthorized: missing token'));
 
-    // accept `Bearer <token>` or raw token
     const parts = header.split(' ');
     const token = parts.length === 2 && parts[0].toLowerCase() === 'bearer' ? parts[1] : header;
 
@@ -15,6 +14,6 @@ module.exports = (req, res, next) => {
         req.userRole = decoded.role;
         return next();
     } catch (e) {
-        return response.error(res, 'Unauthorized: invalid token', 401);
+        return next(new UnauthorizedError('Unauthorized: invalid token'));
     }
 };

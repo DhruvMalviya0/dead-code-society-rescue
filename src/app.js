@@ -6,6 +6,7 @@ var cors = require('cors');
 var path = require('path');
 
 // models are here
+// SMELL: [MEDIUM] Requiring models at startup before DB connection may hide circular dependency issues; load lazily where needed.
 var User = require('../models/User'); // manually load models
 var Shipment = require('../models/Shipment');
 
@@ -47,6 +48,7 @@ app.get('/', function(req, res) {
 
 // start server
 var PORT = process.env.PORT || 3000;
+// SMELL: [MEDIUM] Server starts regardless of DB connection; consider delaying `app.listen` until DB is connected to avoid runtime errors.
 app.listen(PORT, function() {
     console.log('Server is alive on port ' + PORT);
     console.log('Wait for MongoDB before testing...');

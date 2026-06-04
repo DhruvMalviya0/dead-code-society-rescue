@@ -4,10 +4,11 @@ const hash = require('../utils/hash');
 module.exports = {
     async registerUser(userData) {
         // whitelist expected fields
+        const passwordHash = await hash.hash(userData.password);
         const u = {
             name: userData.name,
             email: userData.email,
-            password: hash.hash(userData.password),
+            password: passwordHash,
             role: userData.role || 'user'
         };
 

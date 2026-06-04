@@ -1,7 +1,11 @@
-const md5 = require('md5');
+const bcrypt = require('bcrypt');
 
 module.exports = {
-    hash(input) {
-        return md5(input || '');
+    async hash(input) {
+        const s = input || '';
+        return bcrypt.hash(s, 12);
+    },
+    async compare(plain, hashed) {
+        return bcrypt.compare(plain, hashed);
     }
 };

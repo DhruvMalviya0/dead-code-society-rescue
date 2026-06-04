@@ -17,13 +17,12 @@ module.exports = {
             const user = await userService.findByEmail(req.body.email);
             if (!user) return response.error(res, 'No user found with that email', 404);
 
-            const hashed = require('../utils/hash').hash(req.body.password);
-            if (user.password === hashed) {
-                const token = jwtUtil.sign({ id: user._id, role: user.role }, { expiresIn: '12h' });
-                return response.success(res, { token, data: { name: user.name, email: user.email, role: user.role } });
-            }
+            const hashUtil = require('../utils/hash');
+            const isValid = await hashUtil.compare(req.body.password, user.password);
+            if (!isValid) return response.error(res, 'Password does not match', 401);
 
-            return response.error(res, 'Password does not match', 401);
+            const token = jwtUtil.sign({ id: user._id, role: user.role }, { expiresIn: '12h' });
+            return response.success(res, { token, data: { name: user.name, email: user.email, role: user.role } });
         } catch (err) {
             return response.error(res, 'Server error', 500);
         }

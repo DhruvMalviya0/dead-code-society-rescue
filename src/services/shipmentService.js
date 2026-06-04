@@ -2,11 +2,14 @@ const Shipment = require('../models/Shipment');
 
 module.exports = {
     listByUser(userId) {
-        return Shipment.find({ userId }).lean();
+        return Shipment.find({ userId })
+            .populate('userId', 'name email role')
+            .lean();
     },
 
     getById(id) {
-        return Shipment.findById(id);
+        return Shipment.findById(id)
+            .populate('userId', 'name email role');
     },
 
     createShipment(data) {

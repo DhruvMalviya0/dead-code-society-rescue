@@ -10,11 +10,30 @@ const errorHandler = require('./middlewares/errorHandler.middleware');
 const routes = require('./routes');
 
 const app = express();
+let queryCount = 0;
+
+if (process.env.MONGOOSE_DEBUG === 'true') {
+    mongoose.set('debug', function(collectionName, methodName) {
+        queryCount += 1;
+        console.log('[MONGO_DEBUG]', collectionName + '.' + methodName);
+    });
+}
 
 // middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+if (process.env.MONGOOSE_DEBUG === 'true') {
+    app.use((req, res, next) => {
+        const startCount = queryCount;
+        res.on('finish', () => {
+            const requestQueries = queryCount - startCount;
+            console.log('[QUERY_COUNT]', req.method, req.originalUrl, requestQueries);
+        });
+        next();
+    });
+}
 
 // database connection
 const mongoUrl = process.env.DATABASE_URL || 'mongodb://localhost:27017/logitrack';

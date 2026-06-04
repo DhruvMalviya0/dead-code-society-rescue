@@ -13,13 +13,12 @@ var userSchema = new Schema({
         unique: true
     },
     password: {
-        type: String, // using md5 for now, easy to test
-        // SMELL: [CRITICAL] Storing passwords as fast hashes (MD5) is insecure. Use a slow, salted algorithm (bcrypt/argon2) and store only the salted hash.
+        type: String,
         required: true
     },
     role: {
         type: String,
-        default: 'user' // either 'user' or 'admin'
+        default: 'user'
     },
     createdAt: {
         type: Date,

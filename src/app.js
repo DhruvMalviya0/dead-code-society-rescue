@@ -5,12 +5,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var path = require('path');
 
-// models are here
-// SMELL: [MEDIUM] Requiring models at startup before DB connection may hide circular dependency issues; load lazily where needed.
-var User = require('../models/User'); // manually load models
-var Shipment = require('../models/Shipment');
-
-// routes
+// routes (index.js in src/routes)
 var routes = require('./routes');
 
 var app = express();
